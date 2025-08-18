@@ -35,6 +35,14 @@ def add_tag(tag_id, text):
     conn.commit()
     conn.close()
 
+def update_tag(tag_id, text):
+    """Actualiza el texto de un tag existente (mantiene count)"""
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE tags SET text = ? WHERE id = ?", (text, tag_id))
+    conn.commit()
+    conn.close()
+
 
 # Inicializar DB
 init_db()
@@ -43,18 +51,27 @@ init_db()
 reader = SimpleMFRC522()
 
 try:
-    print("Acerca un tag para registrarlo...")
+    print("Acerca un tag para registrarlo o actualizarlo...")
     tag_id, text = reader.read()
 
     row = get_tag(tag_id)
 
     if row:
-        print("\n>> ESTE TAG YA EXISTE EN LA BASE")
+        print("\n>> ESTE TAG YA EXISTE")
         print(f"ID: {row[0]}")
-        print(f"Texto guardado: {row[2]}")
+        print(f"Texto actual: {row[2]}")
         print(f"Cantidad de lecturas: {row[1]}")
+
+        # Preguntar si quiere actualizar texto
+        choice = input("¿Deseas actualizar el texto de este tag? (s/n): ").strip().lower()
+        if choice == "s":
+            new_text = input("Ingresa el nuevo texto: ").strip()
+            update_tag(tag_id, new_text)
+            print(f"✅ Tag actualizado con nuevo texto: {new_text}")
+        else:
+            print("ℹ️  El texto no fue modificado.")
     else:
-        # Si el texto leído está vacío o quieres cambiarlo, pedir por consola
+        # Si no existe, lo insertamos
         if not text.strip():
             text = input("El tag no tiene texto. Ingresa un texto para asociar: ")
         else:
