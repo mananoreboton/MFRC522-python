@@ -4,8 +4,10 @@ import sqlite3
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import pygame
+import os
 
 DB_FILE = "tags.db"
+SONGS_DIR = "songs"   # Carpeta donde se guardan las canciones
 
 # -------------------- BASE DE DATOS --------------------
 def init_db():
@@ -39,26 +41,31 @@ def update_tag(tag_id, new_count):
 
 # -------------------- COMANDOS --------------------
 def cmd_play_song(args):
-    """Reproduce un archivo MP3 usando pygame"""
+    """Reproduce un archivo MP3 desde la carpeta songs/"""
     if not args:
-        print("⚠️  No se indicó nombre de archivo para reproducir.")
+        print("⚠️  No se indicó nombre de canción.")
         return
     
-    song = args[0]
+    song_name = args[0] + ".mp3"
+    song_path = os.path.join(SONGS_DIR, song_name)
+
+    if not os.path.exists(song_path):
+        print(f"❌ La canción '{song_name}' no se encontró en la carpeta '{SONGS_DIR}'")
+        return
+    
     try:
         pygame.mixer.init()
-        pygame.mixer.music.load(song)
+        pygame.mixer.music.load(song_path)
         pygame.mixer.music.play()
-        print(f"🎵 Reproduciendo: {song}")
+        print(f"🎵 Reproduciendo: {song_name}")
     except Exception as e:
-        print(f"❌ Error al reproducir {song}: {e}")
+        print(f"❌ Error al reproducir {song_name}: {e}")
 
 
 # Diccionario de comandos disponibles
 COMMANDS = {
     "play song": cmd_play_song,
-    # aquí puedes añadir más comandos en el futuro
-    # "otro comando": funcion_asociada
+    # Se pueden agregar más comandos aquí fácilmente
 }
 
 
@@ -72,8 +79,6 @@ def execute_command(command_text):
         print("⚠️ Tag sin comando asociado.")
         return
 
-    # el comando puede ser de varias palabras (ej: "play song")
-    # probamos del más largo al más corto
     for cmd in sorted(COMMANDS.keys(), key=len, reverse=True):
         if command_text.lower().startswith(cmd):
             args = command_text[len(cmd):].strip().split()
