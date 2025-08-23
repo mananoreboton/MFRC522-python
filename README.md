@@ -1,4 +1,26 @@
-# mfrc522
+# Sonico
+
+# Install
+
+1. Descargar uv package manager
+2. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential
+3. sudo apt install ffmpeg
+4. wget https://github.com/msoap/shell2http/releases/download/v1.17.0/shell2http_1.17.0_linux_arm64.deb
+5. dpkg -i wget shell2http_1.17.0_linux_arm64.deb
+4. source .venv/bin/activate
+4. uv run python setup.py install
+4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
+
+# Use
+
+## Download:
+`uv run python download_song.py "https://www.youtube.com/watch?v=WplI0O5n7ag&list=RDWplI0O5n7ag" "Las notas musicales para mi"`
+
+
+
+
+
+## mfrc522
 
 A python library to read/write RFID tags via the budget MFRC522 RFID module.
 
