@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11"
 
 [[package]]
@@ -7,18 +7,37 @@ name = "fork-mfrc522-python"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "mfrc522" },
     { name = "pygame" },
     { name = "rpi-gpio" },
     { name = "setuptools" },
+    { name = "spi" },
     { name = "spidev" },
+    { name = "yt-dlp" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "mfrc522", specifier = ">=0.0.7" },
     { name = "pygame", specifier = ">=2.6.1" },
     { name = "rpi-gpio", specifier = ">=0.7.1" },
     { name = "setuptools", specifier = ">=80.9.0" },
+    { name = "spi", specifier = ">=0.2.0" },
     { name = "spidev", specifier = ">=3.7" },
+    { name = "yt-dlp", specifier = ">=2025.8.22" },
+]
+
+[[package]]
+name = "mfrc522"
+version = "0.0.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "rpi-gpio" },
+    { name = "spidev" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3c/34/f2e893baa79d82d4faad8abb7c5c0fcd138d367f6f38071f7afe883f65a2/mfrc522-0.0.7.tar.gz", hash = "sha256:74c7020a4fc4870f5d7022542c36143fba771055a2fae2e5929e6a1159d2bf00", size = 5652, upload-time = "2019-04-02T00:36:42.692Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/b5/d33c0634cece0931c3c4e0978b0db58f248045c3b379ccf2d512b76fe044/mfrc522-0.0.7-py3-none-any.whl", hash = "sha256:874fd0385a7e40190063b60af83d615534b1f764c6b776fed1fcc94551c1e62f", size = 18610, upload-time = "2019-04-02T00:36:40.985Z" },
 ]
 
 [[package]]
@@ -66,7 +85,22 @@ wheels = [
 ]
 
 [[package]]
+name = "spi"
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/b2/2b65971cd26f3463ce4e31cae19eb48a5c008316ab975718126a50567660/spi-0.2.0.tar.gz", hash = "sha256:bae38a6b26a9a3be8df13a635f8aba8ce8c480086c9d94f5166f3dc9bb879cda", size = 4947, upload-time = "2015-09-10T20:37:09.253Z" }
+
+[[package]]
 name = "spidev"
 version = "3.7"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b5/99/dd50af8200e224ce9412ad01cdbeeb5b39b2d61acd72138f2b92c4a6d619/spidev-3.7.tar.gz", hash = "sha256:ce628a5ff489f45132679879bff5f455a66abf9751af01843850155b06ae92f0", size = 11616, upload-time = "2025-05-06T14:23:30.783Z" }
+
+[[package]]
+name = "yt-dlp"
+version = "2025.8.22"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/40/98/b077bebdc5c759a3f7af3ed3a2a5345ad1145c61963b476469b840ac84ce/yt_dlp-2025.8.22.tar.gz", hash = "sha256:d1846bbb7edbcd2a0d4a2d76c7a2124868de9ea3b3959a8cb8219e3f7cb5c335", size = 3037631, upload-time = "2025-08-23T00:07:02.939Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f4/06/e9e5e85969bd85142b004577915f33356ee0d5e20b79af8dd40b8bbfc96f/yt_dlp-2025.8.22-py3-none-any.whl", hash = "sha256:b8c71fe4516170dea60c6e5c54e2d45654693b8dc273cad060f22199476ec979", size = 3266783, upload-time = "2025-08-23T00:07:00.176Z" },
+]

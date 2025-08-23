@@ -5,8 +5,11 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "mfrc522>=0.0.7",
     "pygame>=2.6.1",
     "rpi-gpio>=0.7.1",
     "setuptools>=80.9.0",
+    "spi>=0.2.0",
     "spidev>=3.7",
+    "yt-dlp>=2025.8.22",
 ]
