@@ -5,12 +5,51 @@
 1. Descargar uv package manager
 2. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential
 3. sudo apt install ffmpeg
-4. Enable SPI interface with raspi-conf
+4. Enable SPI and I2C interfaces with raspi-conf
 4. wget https://github.com/msoap/shell2http/releases/download/v1.17.0/shell2http_1.17.0_linux_arm64.deb
 4. dpkg -i wget shell2http_1.17.0_linux_arm64.deb
 4. source .venv/bin/activate
 4. uv run python setup.py install
 4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
+4. Install PiSugar Power manager (See section)
+4. Configure audio (See section)
+
+## Install PiSugar Power manager (See section)
+wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
+bash pisugar-power-manager.sh -c release
+Conection: mrbueno, supersonico, :8421
+
+## Configure audio
+
+1. sudo apt install pipewire libspa-0.2-bluetooth
+2. Select Pipewire audio in Advanced options in raspi-config 
+3. Restart.
+
+`systemctl --user status pipewire.service`
+`systemctl --user status pipewire-pulse.service`
+
+must be active.
+
+4. bluetoothctl
+
+power on
+agent on
+default-agent
+scan on
+
+pair 41:42:70:A4:04:33
+trust 41:42:70:A4:04:33
+connect 41:42:70:A4:04:33
+quit
+
+5. Configure sink (just in case):
+
+`wpctl status`
+`wpctl set-default <number_sink>`
+
+6. chmod +x connect_bt.sh
+7. systemctl --user enable ~/MFRC522-python/bt_speaker.service
+8. systemctl --user start bt_speaker.service 
 
 # Use
 
