@@ -50,6 +50,7 @@ quit
 6. chmod +x connect_bt.sh
 7. systemctl --user enable ~/MFRC522-python/bt_speaker.service
 8. systemctl --user start bt_speaker.service 
+9. sudo loginctl enable-linger $USER
 
 # Use
 

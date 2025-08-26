@@ -1,0 +1,5 @@
+shell2http -port 5050 -log=shell2http.log -show-errors -include-stderr -add-exit -form \
+    /lista 'ls -hal songs/' \
+    /bajar 'source .venv/bin/activate; uv run python download_song.py $v_yid' \
+    GET:/archivo 'echo "<html><body><form method=POST action=/file enctype=multipart/form-data><input type=file name=uplfile><input type=submit></form>"'  \
+    POST:/file 'cat $filepath_uplfile > songs/$filename_uplfile; echo Ok'

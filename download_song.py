@@ -1,50 +1,45 @@
 #!/usr/bin/env python3
 """
-Script para descargar canciones de YouTube como MP3 con recorte opcional.
-
-Requisitos:
-    - yt-dlp (pip install yt-dlp)
-    - ffmpeg (instalado en el sistema)
+Descargar canciones de YouTube como MP3 usando solo el ID del video.
 
 Uso:
-    python download_song.py <youtube_url> <nombre_salida> [--start SEG_INICIO] [--end SEG_FIN]
+    python download_song.py <youtube_id> [--start SEG_INICIO] [--end SEG_FIN]
 
-Parámetros:
-    youtube_url    URL del video de YouTube.
-    nombre_salida  Nombre del archivo MP3 de salida (sin extensión).
-    --start        (opcional) segundo inicial para recortar (ej: 380 para 6:20).
-    --end          (opcional) segundo final para recortar (ej: 461 para 7:41).
-
-Ejemplos:
-    Descargar canción completa:
-        python download_song.py "https://www.youtube.com/watch?v=abc123" "mi_cancion"
-
-    Descargar solo entre 6:20 y 7:41:
-        python download_song.py "https://www.youtube.com/watch?v=abc123" "mi_cancion" --start 380 --end 461
+El nombre del MP3 de salida se genera automáticamente a partir de las
+primeras 10 letras del título del video.
 """
 
 import argparse
 import os
 import subprocess
-import sys
-
 import yt_dlp
 
 
-def download_audio(url: str, output_path: str) -> str:
+def download_audio(youtube_id: str, output_dir: str) -> str:
     """
-    Descarga el audio de YouTube como archivo MP3 completo.
-    
+    Descarga el audio de YouTube como MP3 y devuelve la ruta del archivo.
+    El nombre del MP3 se genera a partir de las primeras 10 letras del título.
+
     Args:
-        url (str): URL del video de YouTube.
-        output_path (str): Ruta donde guardar el archivo MP3.
-    
+        youtube_id (str): ID del video de YouTube.
+        output_dir (str): Carpeta donde guardar el MP3.
+
     Returns:
-        str: Ruta del archivo descargado.
+        str: Ruta del archivo MP3 descargado.
     """
+    url = f"https://www.youtube.com/watch?v={youtube_id}"
+
+    # Obtener información del video para extraer el título
+    with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        info = ydl.extract_info(url, download=False)
+        title = info.get('title', 'audio')[:10]  # primeras 10 letras
+        safe_title = "".join(c if c.isalnum() else "_" for c in title)
+
+    final_file = os.path.join(output_dir, safe_title + ".mp3")
+
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': output_path,
+        'outtmpl': final_file,  # salida directa a MP3
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -55,52 +50,40 @@ def download_audio(url: str, output_path: str) -> str:
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download([url])
 
-    return output_path
+    return final_file
 
 
-def cut_audio(input_file: str, output_file: str, start: int, end: int):
-    """
-    Recorta un archivo MP3 usando ffmpeg entre dos tiempos dados.
-    
-    Args:
-        input_file (str): Archivo de entrada MP3.
-        output_file (str): Archivo de salida MP3.
-        start (int): Segundo de inicio.
-        end (int): Segundo de fin.
-    """
+def cut_audio(input_file: str, start: int, end: int):
+    """Recorta un MP3 usando ffmpeg (in-place)."""
+    temp_cut = input_file.replace(".mp3", "_cut.mp3")
     command = [
         "ffmpeg", "-y", "-i", input_file,
         "-ss", str(start),
         "-to", str(end),
         "-c:a", "libmp3lame", "-q:a", "2",
-        output_file
+        temp_cut
     ]
     subprocess.run(command, check=True)
 
+    # Reemplazar archivo original por el recortado
+    os.replace(temp_cut, input_file)
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Descargar canción de YouTube como MP3 con recorte opcional.")
-    parser.add_argument("url", help="URL del video de YouTube")
-    parser.add_argument("name", help="Nombre del archivo de salida (sin .mp3)")
+    parser = argparse.ArgumentParser(description="Descargar canción de YouTube como MP3 (ID) con recorte opcional.")
+    parser.add_argument("youtube_id", help="ID del video de YouTube")
     parser.add_argument("--start", type=int, help="Segundo inicial para recorte (opcional)")
     parser.add_argument("--end", type=int, help="Segundo final para recorte (opcional)")
-
     args = parser.parse_args()
 
     os.makedirs("songs", exist_ok=True)
 
-    temp_file = os.path.join("songs", args.name + "_full.mp3")
-    final_file = os.path.join("songs", args.name + ".mp3")
-
-    print(f"Descargando '{args.url}'...")
-    download_audio(args.url, temp_file)
+    print(f"Descargando video {args.youtube_id}...")
+    final_file = download_audio(args.youtube_id, "songs")
 
     if args.start is not None and args.end is not None:
         print(f"Recortando de {args.start}s a {args.end}s...")
-        cut_audio(temp_file, final_file, args.start, args.end)
-        os.remove(temp_file)
-    else:
-        os.rename(temp_file, final_file)
+        cut_audio(final_file, args.start, args.end)
 
     print(f"✅ Canción guardada en: {final_file}")
 
