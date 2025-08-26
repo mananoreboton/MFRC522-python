@@ -5,7 +5,8 @@
 1. Descargar uv package manager
 2. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential
 3. sudo apt install ffmpeg
-4. Enable SPI and I2C interfaces with raspi-conf
+4. uv venv
+5. Enable SPI and I2C interfaces with raspi-conf
 4. wget https://github.com/msoap/shell2http/releases/download/v1.17.0/shell2http_1.17.0_linux_arm64.deb
 4. dpkg -i wget shell2http_1.17.0_linux_arm64.deb
 4. source .venv/bin/activate
