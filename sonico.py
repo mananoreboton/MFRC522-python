@@ -5,9 +5,21 @@ from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import pygame
 import os
+import logging
 
 DB_FILE = "tags.db"
 SONGS_DIR = "songs"   # Carpeta donde se guardan las canciones
+LOG_FILE = "sonico.log"
+
+# -------------------- LOGGING --------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, mode="a", encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)  # opcional: imprime también en consola
+    ]
+)
 
 # -------------------- BASE DE DATOS --------------------
 def init_db():
@@ -43,23 +55,23 @@ def update_tag(tag_id, new_count):
 def cmd_play_song(args):
     """Reproduce un archivo MP3 desde la carpeta songs/"""
     if not args:
-        print("⚠️  No se indicó nombre de canción.")
+        logging.warning("No se indicó nombre de canción.")
         return
     
     song_name = args[0] + ".mp3"
     song_path = os.path.join(SONGS_DIR, song_name)
 
     if not os.path.exists(song_path):
-        print(f"❌ La canción '{song_name}' no se encontró en la carpeta '{SONGS_DIR}'")
+        logging.error(f"La canción '{song_name}' no se encontró en la carpeta '{SONGS_DIR}'")
         return
     
     try:
         pygame.mixer.init()
         pygame.mixer.music.load(song_path)
         pygame.mixer.music.play()
-        print(f"🎵 Reproduciendo: {song_name}")
+        logging.info(f"Reproduciendo: {song_name}")
     except Exception as e:
-        print(f"❌ Error al reproducir {song_name}: {e}")
+        logging.exception(f"Error al reproducir {song_name}: {e}")
 
 
 # Diccionario de comandos disponibles
@@ -76,7 +88,7 @@ def execute_command(command_text):
     """
     parts = command_text.strip().split()
     if not parts:
-        print("⚠️ Tag sin comando asociado.")
+        logging.warning("Tag sin comando asociado.")
         return
 
     for cmd in sorted(COMMANDS.keys(), key=len, reverse=True):
@@ -85,7 +97,7 @@ def execute_command(command_text):
             COMMANDS[cmd](args)
             return
 
-    print(f"⚠️ Comando no reconocido: {command_text}")
+    logging.warning(f"Comando no reconocido: {command_text}")
 
 
 # -------------------- MAIN LOOP --------------------
@@ -94,7 +106,7 @@ reader = SimpleMFRC522()
 
 try:
     while True:
-        print("Acerca un tag al lector...")
+        logging.info("Esperando un tag...")
         tag_id, _ = reader.read()
 
         row = get_tag(tag_id)
@@ -104,21 +116,17 @@ try:
             new_count = count + 1
             update_tag(id_, new_count)
 
-            print(f"\n>> TAG ENCONTRADO")
-            print(f"ID: {id_}")
-            print(f"Texto guardado: {saved_text}")
-            print(f"Cantidad de lecturas: {new_count}")
+            logging.info(f">> TAG ENCONTRADO | ID: {id_} | Texto: {saved_text} | Lecturas: {new_count}")
 
             # Ejecutar comando asociado
             execute_command(saved_text)
         else:
-            print(f"\n>> TAG NO REGISTRADO")
-            print(f"ID: {tag_id}")
-            print("No se consiguió en la base de datos.")
+            logging.info(f">> TAG NO REGISTRADO | ID: {tag_id}")
 
         sleep(5)
 
 except KeyboardInterrupt:
     GPIO.cleanup()
+    logging.info("Programa interrumpido con Ctrl+C")
     sys.exit(0)
 

@@ -1,12 +1,16 @@
 [Unit]
 Description=Auto connect Bluetooth Speaker
 After=bluetooth.service
+Wants=bluetooth.service
 
 [Service]
 Type=oneshot
-ExecStart=%h/MFRC522-python/connect_bt.sh
+User=mrbueno
+Group=mrbueno
+WorkingDirectory=/home/mrbueno/MFRC522-python
+ExecStart=/home/mrbueno/MFRC522-python/connect_bt.sh
 RemainAfterExit=true
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 

@@ -11,9 +11,11 @@
 4. dpkg -i wget shell2http_1.17.0_linux_arm64.deb
 4. source .venv/bin/activate
 4. uv run python setup.py install
+4. uv run python sonico.py
 4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
 4. Install PiSugar Power manager (See section)
 4. Configure audio (See section)
+4. Condifure Sonico service (See section)
 
 ## Install PiSugar Power manager (See section)
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
@@ -49,16 +51,23 @@ quit
 `wpctl set-default <number_sink>`
 
 6. chmod +x connect_bt.sh
-7. systemctl --user enable ~/MFRC522-python/bt_speaker.service
-8. systemctl --user start bt_speaker.service 
-9. sudo loginctl enable-linger $USER
+6. sudo cp /home/mrbueno/MFRC522-python/bt_speaker.service /etc/systemd/system/
+6. sudo systemctl daemon-reload
+6. sudo systemctl enable bt_speaker.service
+6. sudo systemctl start bt_speaker.service
+6. systemctl status bt_speaker.service
+
+## COnfigure Sonico
+
+mkdir -p ~/.config/systemd/user
+cp /home/mrbueno/MFRC522-python/sonico.service ~/.config/systemd/user/
+systemctl --user daemon-reload
+systemctl --user start sonico.service
+systemctl --user status sonico.service
+journalctl --user -u sonico.service -f
+sudo usermod -aG audio mrbueno
 
 # Use
-
-## Download:
-`uv run python download_song.py "https://www.youtube.com/watch?v=WplI0O5n7ag&list=RDWplI0O5n7ag" "Las notas musicales para mi"`
-
-
 
 
 
