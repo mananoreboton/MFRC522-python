@@ -9,3 +9,5 @@
 
 # Build folder
 /build/
+*.log
+songs/
