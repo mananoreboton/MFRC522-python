@@ -70,9 +70,10 @@ sudo usermod -aG audio mrbueno
 ## Configure http endpoints
 
 chmod +x cmd_shell2http.sh 
+cp /home/mrbueno/MFRC522-python/shell2http.service ~/.config/systemd/user/
 systemctl --user daemon-reload
-systemctl --user start shell2http.service
 systemctl --user enable shell2http.service
+systemctl --user start shell2http.service
 systemctl --user status shell2http.service
 
 
