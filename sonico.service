@@ -1,16 +1,19 @@
 [Unit]
-Description=Sonico RFID Music Player (Headless)
-After=pipewire.service
-Wants=pipewire.service
+Description=Sonico RFID + MP3
+After=bt_speaker.service
+Requires=bt_speaker.service
 
 [Service]
 Type=simple
 WorkingDirectory=/home/mrbueno/MFRC522-python
-ExecStart=/home/mrbueno/MFRC522-python/.venv/bin/python sonico.py
+ExecStart=/home/mrbueno/MFRC522-python/.venv/bin/python /home/mrbueno/MFRC522-python/sonico.py
 Restart=always
 RestartSec=5
+User=mrbueno
+Group=mrbueno
+Environment=PYTHONUNBUFFERED=1
 Environment=PIPEWIRE_LATENCY=0
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 
