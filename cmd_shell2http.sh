@@ -19,7 +19,7 @@ exec shell2http \
     /status 'vcgencmd measure_temp; systemctl --user status sonico.service; systemctl --user status pipewire.service; systemctl status bt_speaker.service' \
     /lista 'ls -hal songs/' \
     /stop 'killall python -9; systemctl --user stop sonico.service' \
-    /tag 'source .venv/bin/activate; uv run python add_tag.py' \
+    /tag 'source .venv/bin/activate; uv run python add_tag.py "play song $v_n"' \
     /start 'systemctl --user restart sonico.service' \
     /bt 'sudo systemctl restart bt_speaker.service' \
     /download 'source .venv/bin/activate; uv run python download_song.py $v_yid' \
