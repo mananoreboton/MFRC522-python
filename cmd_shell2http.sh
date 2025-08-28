@@ -19,9 +19,9 @@ exec shell2http \
     /status 'vcgencmd measure_temp; systemctl --user status sonico.service; systemctl --user status pipewire.service; systemctl status bt_speaker.service' \
     /lista 'ls -hal songs/' \
     /stop 'killall python -9; systemctl --user stop sonico.service' \
-    /tag 'source .venv/bin/activate; uv run python add_tag.py "play song $v_n"' \
+    /tag '/home/mrbueno/MFRC522-python/.venv/bin/python add_tag.py "play song $v_n"' \
     /start 'systemctl --user restart sonico.service' \
     /bt 'sudo systemctl restart bt_speaker.service' \
-    /download 'source .venv/bin/activate; uv run python download_song.py $v_yid' \
-    GET:/archivo 'echo "<html><body><form method=POST action=/file enctype=multipart/form-data><input type=file name=uplfile><input type=submit></form>"' \
+    /download '/home/mrbueno/MFRC522-python/.venv/bin/python download_song.py $v_yid' \
+    GET:/file 'echo "<html><body><form method=POST action=/file enctype=multipart/form-data><input type=file name=uplfile><input type=submit></form>"' \
     POST:/file 'cat $filepath_uplfile > songs/$filename_uplfile; echo Ok'
