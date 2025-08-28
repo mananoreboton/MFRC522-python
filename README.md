@@ -15,7 +15,7 @@
 4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
 4. Install PiSugar Power manager (See section)
 4. Configure audio (See section)
-4. Condifure Sonico service (See section)
+4. Configure Sonico service (See section)
 
 ## Install PiSugar Power manager (See section)
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
@@ -57,7 +57,7 @@ quit
 6. sudo systemctl start bt_speaker.service
 6. systemctl status bt_speaker.service
 
-## COnfigure Sonico
+## Configure Sonico
 
 mkdir -p ~/.config/systemd/user
 cp /home/mrbueno/MFRC522-python/sonico.service ~/.config/systemd/user/
@@ -66,6 +66,16 @@ systemctl --user start sonico.service
 systemctl --user status sonico.service
 journalctl --user -u sonico.service -f
 sudo usermod -aG audio mrbueno
+
+## Configure http endpoints
+
+chmod +x cmd_shell2http.sh 
+systemctl --user daemon-reload
+systemctl --user start shell2http.service
+systemctl --user enable shell2http.service
+systemctl --user status shell2http.service
+
+
 
 # Use
 
