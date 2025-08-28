@@ -100,14 +100,22 @@ def execute_command(command_text):
     logging.warning(f"Comando no reconocido: {command_text}")
 
 
+
 # -------------------- MAIN LOOP --------------------
 init_db()
 reader = SimpleMFRC522()
 
+def read():
+    id, text = reader.read_no_block()
+    while not id:
+        id, text = reader.read_no_block()
+        sleep(1)
+    return id, text
+
 try:
     while True:
         logging.info("Esperando un tag...")
-        tag_id, _ = reader.read()
+        tag_id, _ = read()
 
         row = get_tag(tag_id)
 
