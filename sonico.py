@@ -109,7 +109,7 @@ def read():
     id, text = reader.read_no_block()
     while not id:
         id, text = reader.read_no_block()
-        sleep(1)
+        sleep(0.3)
     return id, text
 
 try:
