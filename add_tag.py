@@ -1,4 +1,5 @@
 import sqlite3
+import sys
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 
@@ -44,6 +45,16 @@ def update_tag(tag_id, text):
     conn.close()
 
 
+# Verificar que se recibió el texto como argumento
+if len(sys.argv) != 2:
+    print(f"Uso: python {sys.argv[0]} \"texto_del_tag\"")
+    sys.exit(1)
+
+tag_text = sys.argv[1].strip()
+if not tag_text:
+    print("❌ El texto del tag no puede estar vacío.")
+    sys.exit(1)
+
 # Inicializar DB
 init_db()
 
@@ -52,7 +63,7 @@ reader = SimpleMFRC522()
 
 try:
     print("Acerca un tag para registrarlo o actualizarlo...")
-    tag_id, text = reader.read()
+    tag_id, _ = reader.read()  # ignoramos el texto leído del tag
 
     row = get_tag(tag_id)
 
@@ -62,27 +73,13 @@ try:
         print(f"Texto actual: {row[2]}")
         print(f"Cantidad de lecturas: {row[1]}")
 
-        # Preguntar si quiere actualizar texto
-        choice = input("¿Deseas actualizar el texto de este tag? (s/n): ").strip().lower()
-        if choice == "s":
-            new_text = input("Ingresa el nuevo texto: ").strip()
-            update_tag(tag_id, new_text)
-            print(f"✅ Tag actualizado con nuevo texto: {new_text}")
-        else:
-            print("ℹ️  El texto no fue modificado.")
+        update_tag(tag_id, tag_text)
+        print(f"✅ Tag actualizado con nuevo texto: {tag_text}")
     else:
-        # Si no existe, lo insertamos
-        if not text.strip():
-            text = input("El tag no tiene texto. Ingresa un texto para asociar: ")
-        else:
-            use_text = input(f"Se leyó el texto '{text.strip()}'. ¿Quieres usarlo? (s/n): ")
-            if use_text.lower() != 's':
-                text = input("Ingresa el nuevo texto: ")
-
-        add_tag(tag_id, text.strip())
+        add_tag(tag_id, tag_text)
         print("\n>> NUEVO TAG REGISTRADO")
         print(f"ID: {tag_id}")
-        print(f"Texto: {text.strip()}")
+        print(f"Texto: {tag_text}")
         print("Cantidad de lecturas: 0")
 
 except KeyboardInterrupt:
@@ -91,4 +88,3 @@ except KeyboardInterrupt:
 
 finally:
     GPIO.cleanup()
-
