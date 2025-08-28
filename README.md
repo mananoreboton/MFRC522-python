@@ -67,7 +67,7 @@ systemctl --user status sonico.service
 journalctl --user -u sonico.service -f
 sudo usermod -aG audio mrbueno
 
-## Not working - Failed to connect to bus: No such file or directory- Configure http endpoints
+## Configure http endpoints
 
 chmod +x cmd_shell2http.sh 
 cp /home/mrbueno/MFRC522-python/shell2http.service ~/.config/systemd/user/
