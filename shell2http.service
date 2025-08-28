@@ -1,0 +1,14 @@
+[Unit]
+Description=Servidor HTTP con shell2http para controlar Sonico
+After=network.target
+
+[Service]
+ExecStart=/home/mrbueno/MFRC522-python/cmd_shell2http.sh
+WorkingDirectory=/home/mrbueno/MFRC522-python
+Restart=on-failure
+RestartSec=5
+Environment=XDG_RUNTIME_DIR=%t/runtime-%u
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=%t/runtime-%u/bus
+
+[Install]
+WantedBy=default.target
