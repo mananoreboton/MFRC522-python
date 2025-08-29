@@ -2,6 +2,7 @@
 
 # Install
 
+1. sudo apt install openssh-server
 1. Descargar uv package manager
 2. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential
 3. sudo apt install ffmpeg
