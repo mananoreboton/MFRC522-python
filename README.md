@@ -16,6 +16,7 @@
 4. Install PiSugar Power manager (See section)
 4. Configure audio (See section)
 4. Configure Sonico service (See section)
+4. enable console auto-login in raspi-conf (configure boot to console if needed)
 
 ## Install PiSugar Power manager (See section)
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
