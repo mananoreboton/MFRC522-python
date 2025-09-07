@@ -13,6 +13,9 @@ User=mrbueno
 Group=mrbueno
 Environment=PYTHONUNBUFFERED=1
 Environment=PIPEWIRE_LATENCY=0
+Environment=XDG_RUNTIME_DIR=/run/user/%U
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
+
 
 [Install]
 WantedBy=multi-user.target
