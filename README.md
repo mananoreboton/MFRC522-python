@@ -1,34 +1,39 @@
 # Sonico
 
+# previously 
+
+1. enable wifi a configure it via raspi-conf
+1. sudo apt install openssh-server
+
 # Install
 
-1. sudo apt install openssh-server
-1. Descargar uv package manager
-2. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential
-3. sudo apt install ffmpeg
+1. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential ffmpeg pipewire libspa-0.2-bluetooth
+1. Enable SPI and I2C interfaces with raspi-conf
+1. Select Pipewire audio in Advanced options in raspi-config 
+1. enable console auto-login in raspi-conf (configure boot to console if needed: systems Options -> S5 and S6)
+1. Restart
+1. Check audio services (See section)
+1. download uv: curl -LsSf https://astral.sh/uv/install.sh | sh
 4. uv venv
-5. Enable SPI and I2C interfaces with raspi-conf
-4. wget https://github.com/msoap/shell2http/releases/download/v1.17.0/shell2http_1.17.0_linux_arm64.deb
-4. dpkg -i wget shell2http_1.17.0_linux_arm64.deb
 4. source .venv/bin/activate
+4. ONLY in Raspberry Pi Zero (Using RPi.GPIO from pip without venv): apt install python3-pygame python3-pygame-sdl2 python3-sdl2 python3-sdl2
 4. uv run python setup.py install
 4. uv run python sonico.py
-4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
-4. Install PiSugar Power manager (See section)
-4. Configure audio (See section)
+
 4. Configure Sonico service (See section)
-4. enable console auto-login in raspi-conf (configure boot to console if needed)
+
+## Optional
+
+4. Configure http endpoints
+4. Install PiSugar Power manager (See section)
+4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
 
 ## Install PiSugar Power manager (See section)
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
 bash pisugar-power-manager.sh -c release
 Conection: mrbueno, supersonico, :8421
 
-## Configure audio
-
-1. sudo apt install pipewire libspa-0.2-bluetooth
-2. Select Pipewire audio in Advanced options in raspi-config 
-3. Restart.
+## Check audio services
 
 `systemctl --user status pipewire.service`
 `systemctl --user status pipewire-pulse.service`
@@ -71,6 +76,8 @@ sudo usermod -aG audio mrbueno
 
 ## Configure http endpoints
 
+wget https://github.com/msoap/shell2http/releases/download/v1.17.0/shell2http_1.17.0_linux_arm64.deb
+dpkg -i wget shell2http_1.17.0_linux_arm64.deb
 chmod +x cmd_shell2http.sh 
 cp /home/mrbueno/MFRC522-python/shell2http.service ~/.config/systemd/user/
 systemctl --user daemon-reload
