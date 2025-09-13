@@ -8,7 +8,8 @@
 
 # Install
 
-1. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential ffmpeg pipewire libspa-0.2-bluetooth expect mpg123 python3-full
+1. sudo apt install -y python3-dev python3-pip python3-setuptools python3-wheel build-essential ffmpeg pipewire libspa-0.2-bluetooth expect mpg123 python3-full git tree vim libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libfreetype6-dev libjpeg-dev libpng-dev
+
 1. Enable SPI and I2C interfaces with raspi-conf
 1. Select Pipewire audio in Advanced options in raspi-config 
 1. enable console auto-login in raspi-conf (configure boot to console if needed: systems Options -> S5 and S6)
@@ -29,7 +30,7 @@
 ## Configure python scripts Raspberry Zero W
 
 1. chmod +x sonico.py
-1. apt install python3-pygame python3-pygame-sdl2 python3-sdl2 python3-sdl2
+1. apt install python3-pygame python3-pygame-sdl2 python3-sdl2
 1. curl -LsSf https://astral.sh/uv/install.sh | sh
 1. uv venv
 1. source .venv/bin/activate
