@@ -1,22 +1,16 @@
 [Unit]
-Description=Sonico RFID + MP3
-After=bt_speaker.service
-Requires=bt_speaker.service
+Description=Sonico RFID + MP3 (User Service)
+After=pipewire.service bt_speaker.service
+Wants=pipewire.service bt_speaker.service
 
 [Service]
 Type=simple
 WorkingDirectory=/home/mrbueno/MFRC522-python
-ExecStart=/home/mrbueno/MFRC522-python/.venv/bin/python /home/mrbueno/MFRC522-python/sonico.py
+ExecStart=/home/mrbueno/MFRC522-python/.venv/bin/python sonico.py
 Restart=always
 RestartSec=5
-User=mrbueno
-Group=mrbueno
 Environment=PYTHONUNBUFFERED=1
 Environment=PIPEWIRE_LATENCY=0
-Environment=XDG_RUNTIME_DIR=/run/user/%U
-Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/%U/bus
-
 
 [Install]
-WantedBy=multi-user.target
-
+WantedBy=default.target

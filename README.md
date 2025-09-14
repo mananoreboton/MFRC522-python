@@ -3,7 +3,7 @@
 # previously 
 
 1. user must be mrbueno
-1. enable wifi a configure it via raspi-conf
+1. enable wifi and configure it via raspi-conf
 1. sudo apt install openssh-server
 
 # Install
@@ -14,11 +14,54 @@
 1. Select Pipewire audio in Advanced options in raspi-config 
 1. enable console auto-login in raspi-conf (configure boot to console if needed: systems Options -> S5 and S6)
 1. Restart
-1. Check audio services (See section)
-1. Configure python scripts (4B or Zero W)
-4. Configure Sonico service (See section)
+1. sudo usermod -aG audio mrbueno
+1. mkdir -p ~/.config/systemd/user
+1. Configure audio services (See section)
+1. Configure python scripts (4B)
+1. Configure Sonico service (See section)
+ 
 
-## Configure python scripts Raspberry 4B
+## Configure audio services
+
+`systemctl --user status pipewire.service`
+`systemctl --user status pipewire-pulse.service`
+
+must be active.
+
+6. bluetoothctl
+
+power on
+agent on
+default-agent
+scan on
+
+pair 41:42:70:A4:04:33
+trust 41:42:70:A4:04:33
+connect 41:42:70:A4:04:33
+quit
+
+6. Configure sink (just in case):
+
+`wpctl status`
+`wpctl set-default <number_sink>`
+
+6. chmod +x connect_bt.sh
+6. sudo cp /home/mrbueno/MFRC522-python/bt_speaker.service /etc/systemd/system/
+6. sudo systemctl daemon-reload
+6. sudo systemctl enable bt_speaker.service
+6. sudo systemctl start bt_speaker.service
+6. systemctl status bt_speaker.service
+6. sudo usermod -aG audio,rtkit $USER
+6. sudo shutdown -r now
+6. groups
+6. ps -o pid,comm,ni,rtprio -p $(pidof pipewire)
+6. mkdir -p ~/.config/pipewire/pipewire.conf.d
+6. cp 99-realtime.conf ~/.config/pipewire/pipewire.conf.d/
+6. systemctl --user restart pipewire
+6. systemctl --user restart wireplumber
+6. ps -o pid,comm,ni,rtprio -p $(pidof pipewire)
+
+## Configure python scripts (4B)
 
 1. chmod +x sonico.py
 1. download uv: curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -27,7 +70,7 @@
 4. uv run python setup.py install
 4. uv run python sonico.py
 
-## Configure python scripts Raspberry Zero W
+### Configure python scripts, alternative way (NOT TESTED)
 
 1. chmod +x sonico.py
 1. apt install python3-pygame python3-pygame-sdl2 python3-sdl2
@@ -40,41 +83,8 @@
 1. python -m pip install pygame
 
 
-## Check audio services
-
-`systemctl --user status pipewire.service`
-`systemctl --user status pipewire-pulse.service`
-
-must be active.
-
-4. bluetoothctl
-
-power on
-agent on
-default-agent
-scan on
-
-pair 41:42:70:A4:04:33
-trust 41:42:70:A4:04:33
-connect 41:42:70:A4:04:33
-quit
-
-5. Configure sink (just in case):
-
-`wpctl status`
-`wpctl set-default <number_sink>`
-
-6. chmod +x connect_bt.sh
-6. sudo cp /home/mrbueno/MFRC522-python/bt_speaker.service /etc/systemd/system/
-6. sudo systemctl daemon-reload
-6. sudo systemctl enable bt_speaker.service
-6. sudo systemctl start bt_speaker.service
-6. systemctl status bt_speaker.service
-
 ## Configure Sonico
 
-sudo usermod -aG audio mrbueno
-mkdir -p ~/.config/systemd/user
 cp /home/mrbueno/MFRC522-python/sonico.service ~/.config/systemd/user/
 systemctl --user daemon-reload
 systemctl --user enable sonico.service
@@ -87,8 +97,10 @@ journalctl --user -u sonico.service -f
 4. Configure http endpoints
 4. Install PiSugar Power manager (See section)
 4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
+4. COnfigure Pipewire as real time: sudo chrt -r -p 20 $(pidof pipewire)
 
 ## Install PiSugar Power manager (See section)
+
 wget https://cdn.pisugar.com/release/pisugar-power-manager.sh
 bash pisugar-power-manager.sh -c release
 Conection: mrbueno, supersonico, :8421
