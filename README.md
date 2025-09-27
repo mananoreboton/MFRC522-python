@@ -94,10 +94,20 @@ journalctl --user -u sonico.service -f
 
 ## Optional
 
-4. Configure http endpoints
+4. Configure network
 4. Install PiSugar Power manager (See section)
+4. Configure http endpoints
 4. sudo nmcli device wifi hotspot ssid SuperSonico password password ifname wlan0
 4. COnfigure Pipewire as real time: sudo chrt -r -p 20 $(pidof pipewire)
+
+## Configure network
+
+5. cp MiHotspot.nmconnection /etc/NetworkManager/system-connections/
+5. cp MiRedUSB.nmnnection /etc/NetworkManager/system-connections/
+5. sudo chmod 600 /etc/NetworkManager/system-connections/MiHotspot.nmconnection
+5. sudo chmod 600 /etc/NetworkManager/system-connections/MiRedUSB.nmconnection
+5. sudo nmcli connection reload
+5. sudo cp 70-persistent-net.rules /etc/udev/rules.d/
 
 ## Install PiSugar Power manager (See section)
 
